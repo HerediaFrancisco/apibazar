@@ -1,7 +1,6 @@
 package com.bazar.apibazar.service.impl;
 
-import com.bazar.apibazar.DTO.ventaDTO;
-import com.bazar.apibazar.entity.Producto;
+import com.bazar.apibazar.dto.ventaDTO;
 import com.bazar.apibazar.entity.Venta;
 import com.bazar.apibazar.repository.IVentaRepository;
 import com.bazar.apibazar.service.IVentaService;

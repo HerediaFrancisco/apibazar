@@ -1,7 +1,6 @@
 package com.bazar.apibazar.controller;
 
-import com.bazar.apibazar.DTO.ventaDTO;
-import com.bazar.apibazar.entity.Cliente;
+import com.bazar.apibazar.dto.ventaDTO;
 import com.bazar.apibazar.entity.Venta;
 import com.bazar.apibazar.service.IVentaService;
 import org.springframework.beans.factory.annotation.Autowired;

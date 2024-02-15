@@ -16,9 +16,9 @@ public class Venta {
     private LocalDate fecha_venta;
     private Double total;
     @OneToMany
-    List<Producto> listaProductos;
+    private List<Producto> listaProductos;
     @OneToOne
-    Cliente cliente;
+    private Cliente cliente;
 
     public Venta() {
     }
