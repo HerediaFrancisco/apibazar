@@ -4,6 +4,8 @@ import com.bazar.apibazar.entity.Cliente;
 import com.bazar.apibazar.entity.Producto;
 import com.bazar.apibazar.service.IProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,30 +18,30 @@ public class ProdcutoController {
     private IProductoService iProductoService;
 
     @PostMapping("/crear")
-    public String crearCProducto(@RequestBody Producto producto){
+    public ResponseEntity<String> crearCProducto(@RequestBody Producto producto){
         iProductoService.crearProducto(producto);
-        return "Producto creado";
+        return new ResponseEntity<>("Producto creado", HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public List<Producto> listarProductos(){
+    public ResponseEntity<List<Producto>> listarProductos(){
         List<Producto> listarProductos = iProductoService.listarProductos();
-        return listarProductos;
+        return new ResponseEntity<>(listarProductos,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Producto buscarProducto(@PathVariable Long id){
-        return iProductoService.buscarProducto(id);
+    public ResponseEntity<Producto> buscarProducto(@PathVariable Long id){
+        return new ResponseEntity<>(iProductoService.buscarProducto(id),HttpStatus.OK);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminarProducto(@PathVariable Long id){
+    public ResponseEntity<String> eliminarProducto(@PathVariable Long id){
         iProductoService.eliminarProducto(id);
-        return "Producto eliminado";
+        return new ResponseEntity<>("Producto eliminado",HttpStatus.OK);
     }
 
     @PutMapping("/actualizar/{idOriginal}")
-    public Producto actualizarProducto(@PathVariable Long idOriginal,
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long idOriginal,
                                      @RequestParam(required = false, name = "codigo_producto") Long nuevoCodigo,
                                      @RequestParam(required = false, name = "nombre") String nuevoNombre,
                                      @RequestParam(required = false, name = "marca") String nuevaMarca,
@@ -47,19 +49,19 @@ public class ProdcutoController {
                                      @RequestParam(required = false, name = "cantidad_disponible") Integer nuevaCantidad){
         iProductoService.actualizarProducto(idOriginal,nuevoCodigo,nuevoNombre,nuevaMarca,nuevoCosto,nuevaCantidad);
         Producto producto = iProductoService.buscarProducto(nuevoCodigo);
-        return producto;
+        return new ResponseEntity<>(producto,HttpStatus.OK);
     }
 
 
     @PutMapping("/actualizar")
-    public Producto actualizarProdcuto(@RequestBody Producto producto){
+    public ResponseEntity<Producto> actualizarProdcuto(@RequestBody Producto producto){
         iProductoService.actualizarProcuto(producto);
-        return iProductoService.buscarProducto(producto.getCodigo_producto());
+        return new ResponseEntity<>(iProductoService.buscarProducto(producto.getCodigo_producto()),HttpStatus.OK);
     }
 
     @GetMapping("/faltaStock")
-    public List<Producto> faltaStock(){
+    public ResponseEntity<List<Producto>> faltaStock(){
         List<Producto> faltaStock = iProductoService.stockProductos();
-        return faltaStock;
+        return new ResponseEntity<>(faltaStock,HttpStatus.OK);
     }
 }

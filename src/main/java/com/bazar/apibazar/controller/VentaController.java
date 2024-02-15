@@ -5,6 +5,8 @@ import com.bazar.apibazar.entity.Cliente;
 import com.bazar.apibazar.entity.Venta;
 import com.bazar.apibazar.service.IVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -18,58 +20,58 @@ public class VentaController {
     private IVentaService iVentaService;
 
     @PostMapping("/crear")
-    public String crearVenta(@RequestBody Venta venta){
+    public ResponseEntity<String> crearVenta(@RequestBody Venta venta){
         iVentaService.crearVenta(venta);
-        return "Venta creado";
+        return new ResponseEntity<>("Venta creado", HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public List<Venta> listarVentas(){
+    public ResponseEntity<List<Venta>> listarVentas(){
         List<Venta> listarVentas = iVentaService.listarVentas();
-        return listarVentas;
+        return new ResponseEntity<>(listarVentas,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Venta buscarVenta(@PathVariable Long id){
-        return iVentaService.buscarVenta(id);
+    public ResponseEntity<Venta> buscarVenta(@PathVariable Long id){
+        return new ResponseEntity<>(iVentaService.buscarVenta(id),HttpStatus.OK);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminarVenta(@PathVariable Long id){
+    public ResponseEntity<String> eliminarVenta(@PathVariable Long id){
         iVentaService.eliminarVenta(id);
-        return "Venta eliminada";
+        return new ResponseEntity<>("Venta eliminada",HttpStatus.OK);
     }
 
     /* DEBO MEJORAR ESTA PARTE DEL CODIGO (ACTUALIZAR)*/
 
     @PutMapping("/actualizar/{idOriginal}")
-    public Venta actualizarVenta(@PathVariable Long idOriginal,
+    public ResponseEntity<Venta> actualizarVenta(@PathVariable Long idOriginal,
                                      @RequestParam(required = false, name = "codigo_venta") Long nuevoCodigo,
                                      @RequestParam(required = false, name = "fecha_venta") LocalDate nuevaFecha,
                                      @RequestParam(required = false, name = "total") Double nuevoTotal){
         iVentaService.actualizarVenta(idOriginal, nuevoCodigo, nuevaFecha, nuevoTotal);
         Venta venta = iVentaService.buscarVenta(nuevoCodigo);
 
-        return venta;
+        return new ResponseEntity<>(venta,HttpStatus.OK);
     }
     @PutMapping("/actualizar")
-    public Venta actualizarVenta(@RequestBody Venta venta){
+    public ResponseEntity<Venta> actualizarVenta(@RequestBody Venta venta){
         iVentaService.actualizarVenta(venta);
-        return iVentaService.buscarVenta(venta.getCodigo_venta());
+        return new ResponseEntity<>(iVentaService.buscarVenta(venta.getCodigo_venta()),HttpStatus.OK);
     }
 
     @GetMapping("/productosVenta/{idVenta}")
-    public List<?> productosVenta(@PathVariable Long idVenta){
-        return iVentaService.productosVenta(idVenta);
+    public ResponseEntity<List<?>> productosVenta(@PathVariable Long idVenta){
+        return new ResponseEntity<>(iVentaService.productosVenta(idVenta),HttpStatus.OK);
     }
 
     @GetMapping("/ventasFecha/{fechaVenta}")
-    public String ventasXFecha(@PathVariable LocalDate fechaVenta){
-        return iVentaService.montoTotal(fechaVenta);
+    public ResponseEntity<String> ventasXFecha(@PathVariable LocalDate fechaVenta){
+        return new ResponseEntity<>(iVentaService.montoTotal(fechaVenta),HttpStatus.OK);
     }
 
     @GetMapping("/ventaMayor")
-    public ventaDTO ventaMayor(){
-        return iVentaService.mayorVenta();
+    public ResponseEntity<ventaDTO> ventaMayor(){
+        return new ResponseEntity<>(iVentaService.mayorVenta(),HttpStatus.OK);
     }
 }

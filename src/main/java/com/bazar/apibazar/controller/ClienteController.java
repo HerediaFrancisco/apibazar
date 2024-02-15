@@ -3,6 +3,8 @@ package com.bazar.apibazar.controller;
 import com.bazar.apibazar.entity.Cliente;
 import com.bazar.apibazar.service.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,42 +17,43 @@ public class ClienteController {
     private IClienteService iClienteService;
 
     @PostMapping("/crear")
-    public String crearCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<String> crearCliente(@RequestBody Cliente cliente){
         iClienteService.crearCliente(cliente);
-        return "Cliente creado";
+        return new ResponseEntity<>("Cliente creado", HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public List<Cliente> listarClientes(){
+    public ResponseEntity<List<Cliente>> listarClientes(){
         List<Cliente> listarClientes = iClienteService.listarClientes();
-        return listarClientes;
+        return new ResponseEntity<>(listarClientes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Cliente buscarCliente(@PathVariable Long id){
-        return iClienteService.buscarCliente(id);
+    public ResponseEntity<Cliente> buscarCliente(@PathVariable Long id){
+        return new ResponseEntity<>(iClienteService.buscarCliente(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminarCliente(@PathVariable Long id){
+    public ResponseEntity<String> eliminarCliente(@PathVariable Long id){
         iClienteService.eliminarCliente(id);
-        return "Cliente eliminado";
+        return new ResponseEntity<>("Cliente eliminado", HttpStatus.OK);
     }
 
     @PutMapping("/actualizar/{idOriginal}")
-    public Cliente actualizarCliente(@PathVariable Long idOriginal,
+    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long idOriginal,
                                      @RequestParam(required = false, name = "id") Long nuevoId,
                                      @RequestParam(required = false, name = "nombre") String nuevoNombre,
                                      @RequestParam(required = false, name = "apellido") String nuevoApellido,
                                      @RequestParam(required = false, name = "dni") Integer nuevoDni) {
         iClienteService.actualizarCliente(idOriginal, nuevoId, nuevoNombre, nuevoApellido, nuevoDni);
         Cliente cliente = iClienteService.buscarCliente(nuevoId);
-        return cliente;
+
+        return new ResponseEntity<>(cliente,HttpStatus.OK);
     }
 
     @PutMapping("/actualizar")
-    public Cliente actualizarCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<Cliente> actualizarCliente(@RequestBody Cliente cliente){
         iClienteService.actualizarCliente(cliente);
-        return iClienteService.buscarCliente(cliente.getId());
+        return new ResponseEntity<>(iClienteService.buscarCliente(cliente.getId()),HttpStatus.OK);
     }
 }
