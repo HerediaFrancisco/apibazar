@@ -1,8 +1,16 @@
 package com.bazar.apibazar.service.impl;
 
+import com.bazar.apibazar.dto.entrada.ClienteEntradaDto;
+import com.bazar.apibazar.dto.entrada.ProductoEntradaDto;
+import com.bazar.apibazar.dto.modificacion.ClienteModifcadoDto;
+import com.bazar.apibazar.dto.modificacion.ProductoModifcadoDto;
+import com.bazar.apibazar.dto.salida.ClienteSalidaDto;
+import com.bazar.apibazar.dto.salida.ProductoSalidaDto;
+import com.bazar.apibazar.entity.Cliente;
 import com.bazar.apibazar.entity.Producto;
 import com.bazar.apibazar.repository.IProductoRepository;
 import com.bazar.apibazar.service.IProductoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,45 +23,60 @@ public class ProductoService implements IProductoService {
 
     @Autowired
     private IProductoRepository iProductoRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+
+
     @Override
-    public void crearProducto(Producto producto) {
-        iProductoRepository.save(producto);
+    public ProductoSalidaDto crearProducto(ProductoEntradaDto producto) {
+
+        Producto productoEntidad = modelMapper.map(producto, Producto.class);
+        Producto productoAPersistir = iProductoRepository.save(productoEntidad);
+        ProductoSalidaDto productoSalidaDto = modelMapper.map(productoAPersistir,ProductoSalidaDto.class);
+
+        return productoSalidaDto;
     }
 
     @Override
-    public List<Producto> listarProductos() {
-        List<Producto> listarProductos = iProductoRepository.findAll();
-        return listarProductos;
+    public List<ProductoSalidaDto> listarProductos() {
+        List<ProductoSalidaDto> productoSalidaDtos = iProductoRepository.findAll()
+                .stream().map(producto -> modelMapper.map(producto, ProductoSalidaDto.class)).toList();
+        return productoSalidaDtos;
     }
 
     @Override
-    public Producto buscarProducto(Long id_producto) {
-        Producto producto = iProductoRepository.findById(id_producto).orElse(null);
-        return producto;
+    public ProductoSalidaDto buscarProducto(Long id_producto) {
+        Producto productoBuscado = iProductoRepository.findById(id_producto).orElse(null);
+        ProductoSalidaDto productoSalidaDto = modelMapper.map(productoBuscado, ProductoSalidaDto.class);
+
+        // ACA HAY QUE MANEJAR LAS EXCEPCIONES PARA CUANDO NO SE ENCUENTRE UN PRODUCTO
+
+        return productoSalidaDto;
     }
 
     @Override
     public void eliminarProducto(Long id_producto) {
         iProductoRepository.deleteById(id_producto);
+        //MANEJAR EXCEPCIONES POR SI NO SE ENCUENTRA EL CLIENTE A ELIMINAR
     }
 
     @Override
-    public void actualizarProducto(Long idOriginal, Long nuevoCodigo, String nuevoNombre, String nuevaMarca, Double nuevoCosto, Integer nuevaCantidad) {
-        Producto producto = this.buscarProducto(idOriginal);
-        producto.setCodigo_producto(nuevoCodigo);
-        producto.setNombre(nuevoNombre);
-        producto.setMarca(nuevaMarca);
-        producto.setCosto(nuevoCosto);
-        producto.setCantidad_disponible(nuevaCantidad);
+    public ProductoSalidaDto actualizarProducto(ProductoModifcadoDto producto){
+        Producto productoRecibido = modelMapper.map(producto, Producto.class);
+        Producto productoAActualizar = iProductoRepository.findById(productoRecibido.getCodigo_producto()).orElse(null);
 
-        this.crearProducto(producto);
+        ProductoSalidaDto productoSalidaDto = null;
+
+        if(productoAActualizar != null){
+            productoAActualizar = productoRecibido;
+            iProductoRepository.save(productoAActualizar);
+
+            productoSalidaDto = modelMapper.map(productoAActualizar, ProductoSalidaDto.class);
+        }
+
+        return productoSalidaDto;
     }
-
-    @Override
-    public void actualizarProcuto(Producto producto) {
-        this.crearProducto(producto);
-    }
-
+/*
     @Override
     public List<Producto> stockProductos() {
         List<Producto> stock = this.listarProductos();
@@ -65,5 +88,27 @@ public class ProductoService implements IProductoService {
             }
         }
         return faltaStock;
+    }
+
+ */
+
+@Override
+public List<Producto> stockProductos() {
+    List<ProductoSalidaDto> productoSalidaDtos = listarProductos();
+
+    List<Producto> stock = productoSalidaDtos.stream()
+            .map(productoDto -> modelMapper.map(productoDto, Producto.class)).toList();
+
+    List<Producto> faltaStock = stock.stream()
+            .filter(producto -> producto.getCantidad_disponible() < 5).toList();
+
+    return faltaStock;
+
+}
+
+    private void configureMapping(){
+        modelMapper.typeMap(ProductoEntradaDto.class, Producto.class);
+        modelMapper.typeMap(Producto.class, ProductoSalidaDto.class);
+        modelMapper.typeMap(ProductoModifcadoDto.class, Producto.class);
     }
 }

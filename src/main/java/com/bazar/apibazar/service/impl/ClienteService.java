@@ -27,6 +27,7 @@ public class ClienteService implements IClienteService {
         iClienteRepository.save(cliente);
     }
      */
+
     @Override
     public ClienteSalidaDto crearCliente(ClienteEntradaDto cliente) {
 
@@ -45,13 +46,13 @@ public class ClienteService implements IClienteService {
     }
 
      */
+
     @Override
     public List<ClienteSalidaDto> listarClientes() {
         List<ClienteSalidaDto> clienteSalidaDtos = iClienteRepository.findAll()
                 .stream().map(cliente -> modelMapper.map(cliente, ClienteSalidaDto.class)).toList();
         return clienteSalidaDtos;
     }
-
 
     @Override
     public ClienteSalidaDto buscarCliente(Long id_cliente) {
@@ -87,8 +88,8 @@ public class ClienteService implements IClienteService {
         this.crearCliente(cliente);
     }
 
-
      */
+
     @Override
     public ClienteSalidaDto actualizarCliente(ClienteModifcadoDto cliente){
         Cliente clienteRecibido = modelMapper.map(cliente, Cliente.class);
@@ -106,8 +107,8 @@ public class ClienteService implements IClienteService {
     }
 
     private void configureMapping(){
-    modelMapper.typeMap(ClienteEntradaDto.class, Cliente.class);
-    modelMapper.typeMap(Cliente.class, ClienteSalidaDto.class);
-    modelMapper.typeMap(ClienteModifcadoDto.class, Cliente.class);
+        modelMapper.typeMap(ClienteEntradaDto.class, Cliente.class);
+        modelMapper.typeMap(Cliente.class, ClienteSalidaDto.class);
+        modelMapper.typeMap(ClienteModifcadoDto.class, Cliente.class);
     }
 }
