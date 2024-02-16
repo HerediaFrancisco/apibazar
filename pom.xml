@@ -53,12 +53,19 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Esta dependecia sirve para utilizar los Bean de validacion en los DTO -->
+		<!-- Esta dependencia sirve para utilizar los Bean de validacion en los DTO -->
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>2.0.1.Final</version>
+		</dependency>
+
+		<!-- Esta dependencia sirve para mapear objetos -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.4.4</version>
 		</dependency>
 	</dependencies>
 

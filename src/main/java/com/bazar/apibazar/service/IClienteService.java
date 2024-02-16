@@ -1,16 +1,18 @@
 package com.bazar.apibazar.service;
 
+import com.bazar.apibazar.dto.entrada.ClienteEntradaDto;
+import com.bazar.apibazar.dto.modificacion.ClienteModifcadoDto;
+import com.bazar.apibazar.dto.salida.ClienteSalidaDto;
 import com.bazar.apibazar.entity.Cliente;
 
 import java.util.List;
 
 public interface IClienteService {
-    public void crearCliente(Cliente cliente);
-    public List<Cliente> listarClientes();
-    public Cliente buscarCliente(Long id_cliente);
+    public ClienteSalidaDto crearCliente(ClienteEntradaDto cliente);
+    public List<ClienteSalidaDto> listarClientes();
+    public ClienteSalidaDto buscarCliente(Long id_cliente);
     public void eliminarCliente(Long id_cliente);
+    public ClienteSalidaDto actualizarCliente(ClienteModifcadoDto cliente);
 
-    public void actualizarCliente(Long idOriginal, Long nuevoId, String nuevoNombre, String nuevoApellido, Integer nuevoDni);
-    public void actualizarCliente(Cliente cliente);
 
 }
